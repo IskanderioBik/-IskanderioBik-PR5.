@@ -1,0 +1,112 @@
+CREATE TABLE film (
+	id serial NOT null PRIMARY KEY,
+	name_ varchar NOT NULL,
+	description varchar NULL
+);
+
+CREATE TABLE hall (
+	id serial NOT null PRIMARY KEY,
+	name_ varchar NOT NULL
+);
+
+CREATE TABLE hall_row (
+	id_hall int null REFERENCES hall(id),
+	number_ int2 NOT null PRIMARY KEY,
+	capacity int2 NOT NULL
+);
+
+CREATE TABLE screening (
+	id serial4 NOT null PRIMARY KEY,
+	hall_id int NOT null REFERENCES hall(id),
+	film_id int NOT null REFERENCES film(id),
+	time_ timestamp NOT NULL
+);
+
+
+CREATE TABLE tickets (
+	id serial4 NOT null primary key references screening(id),
+	id_screening int NULL,
+	row_ smallint NOT NULL,
+	seat smallint NOT NULL,
+	cost_ int NOT NULL
+);
+
+
+CREATE OR REPLACE VIEW screening_current_film --задание3
+AS SELECT screening.id,
+    screening.hall_id,
+    film.name_,
+    screening.time_,
+    film.description
+   FROM screening
+     JOIN film ON film.id = screening.film_id
+  WHERE film.name_ = 'Начало';
+
+
+CREATE OR REPLACE VIEW screening_current_hall --задание2
+AS SELECT screening.id,
+    hall.name_,
+    screening.time_
+   FROM screening
+     JOIN hall ON hall.id = screening.hall_id
+  WHERE hall.id = 1;
+
+CREATE OR REPLACE VIEW screening_data_film --задание1
+AS SELECT screening.id,
+    screening.hall_id,
+    film.name_,
+    screening.time_,
+    film.description
+   FROM screening
+     JOIN film ON film.id = screening.film_id
+  WHERE screening.time_ > '2024-01-01 11:00:00';
+
+INSERT INTO film (id,name_,description) VALUES
+	 (1,'Зеленая миля','Драма'),
+	 (2,'Форест Гамп','Драма'),
+	 (3,'Властелин колец: Братство кольца','Фэнтези'),
+	 (4,'Терминатор 2: Судный день','Фантастика'),
+	 (5,'Начало','Фантастика'),
+	 (6,'Гладиатор','История'),
+	 (7,'Список Шиндлера','Драма'),
+	 (8,'Брат 2','Боевик');
+	
+INSERT INTO hall (id,name_) VALUES
+	 (1,'Маленький зал 1'),
+	 (2,'Средний зал 1'),
+	 (3,'Большой зал 1'),
+	 (4,'Маленький зал 2'),
+	 (5,'Средний зал 2'),
+	 (6,'Большой зал 2'),
+	 (7,'Маленький зал 3'),
+	 (8,'Средний зал 3');
+
+INSERT INTO hall_row (id_hall,number_,capacity) VALUES
+	 (1,1,6),
+	 (2,6,12),
+	 (3,2,8),
+	 (4,3,7),
+	 (5,5,12),
+	 (6,4,6),
+	 (7,8,8),
+	 (8,7,7);
+	
+INSERT INTO screening (id,hall_id,film_id,time_) VALUES
+	 (1,8,1,'2024-03-11 11:01:00'),
+	 (2,7,2,'2024-03-13 20:10:00'),
+	 (3,6,3,'2024-03-11 11:22:00'),
+	 (4,5,4,'2024-03-14 10:30:00'),
+	 (5,4,5,'2024-02-07 11:40:00'),
+	 (6,3,6,'2024-01-01 10:00:00'),
+	 (7,2,7,'2024-02-08 11:01:00'),
+	 (8,1,8,'2024-01-01 08:00:00');
+	
+INSERT INTO tickets (id,id_screening,row_,seat,cost_) VALUES
+	 (1,1,8,1,500),
+	 (2,2,8,1,500),
+	 (3,4,8,1,500),
+	 (4,3,8,1,500),
+	 (5,5,8,1,500),
+	 (6,6,8,1,500),
+	 (7,8,8,1,500),
+	 (8,7,8,1,500);
